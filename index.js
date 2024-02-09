@@ -9,8 +9,8 @@ app.use(express.json());
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGODB_URI);
 
-// const userRoutes = require("./routes/user");
-// app.use(userRoutes);
+const userRoutes = require("./routes/user");
+app.use(userRoutes);
 
 const characterRoutes = require("./routes/character");
 app.use(characterRoutes);
