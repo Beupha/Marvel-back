@@ -9,8 +9,19 @@ router.use(express.json());
 
 router.get("/comics", async (req, res) => {
   try {
+    let query = `apiKey=${process.env.API_KEY}`;
+    if (req.query.title) {
+      query = query + `&title=${req.query.title}`;
+    }
+    if (req.query.page) {
+      query = query + `&skip=${(req.query.page - 1) * 100}`;
+    }
+
+    // console.log("req.query -->", req.query);
+    // console.log("req.query.page -->", req.query.page);
+
     let response = await axios.get(
-      `https://lereacteur-marvel-api.herokuapp.com/comics?apiKey=${process.env.API_KEY}`
+      `https://lereacteur-marvel-api.herokuapp.com/comics?${query}`
     );
     // console.log(response.data);
 

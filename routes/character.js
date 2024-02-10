@@ -9,31 +9,20 @@ router.use(express.json());
 
 router.get("/character", async (req, res) => {
   try {
-    const limit = 100;
-    let skip = 0;
-    let page;
-
-    let filters = {};
-
-    if (Number(req.query.page) < 1) {
-      // page sera par défaut à 1
-      page = 1;
-    } else {
-      // Sinon page sera égal au query reçu
-      page = Number(req.query.page);
+    let query = `apiKey=${process.env.API_KEY}`;
+    if (req.query.name) {
+      query = query + `&name=${req.query.name}`;
+    }
+    if (req.query.page) {
+      query = query + `&skip=${(req.query.page - 1) * 100}`;
     }
 
-    console.log("req.query -->", req.query);
-    console.log("req.body -->", req.body);
-    console.log("req.params -->", req.params);
-
     let response = await axios.get(
-      `https://lereacteur-marvel-api.herokuapp.com/characters?skip=${
-        limit * (page - 1)
-      }&apiKey=${process.env.API_KEY}`
+      `https://lereacteur-marvel-api.herokuapp.com/characters?${query}`
     );
 
-    console.log(response);
+    // console.log("response -->", response);
+    // console.log("response.data -->", response.data);
 
     return res.status(200).json(response.data);
   } catch (error) {
