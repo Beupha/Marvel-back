@@ -95,4 +95,8 @@ router.post("/user/login", async (req, res) => {
   }
 });
 
+// Les Favoris
+
+router.get("/user/favoris", async (req, res) => {});
+
 module.exports = router;
