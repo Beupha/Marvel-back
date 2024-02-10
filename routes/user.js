@@ -95,8 +95,98 @@ router.post("/user/login", async (req, res) => {
   }
 });
 
-// Les Favoris
+// Les Favoris ///////////////////////////////////////////////////////////
+// Ajouter un personnage en favoris
+router.post("/user/favoris", async (req, res) => {
+  try {
+    const receivedToken = req.body.token;
+    const receivedId = req.body.id;
 
-router.get("/user/favoris", async (req, res) => {});
+    const userFound = await User.findOne({ token: receivedToken });
+
+    if (!userFound) {
+      return res.status(400).json({
+        message: "Vous n'êtes pas connecté",
+      });
+    }
+
+    if (userFound) {
+      const response = await axios.get(
+        `https://lereacteur-marvel-api.herokuapp.com/character/${receivedId}?apiKey=${process.env.API_KEY}`
+      );
+
+      userFound.favoris.character.push(response.data);
+
+      userFound.save();
+
+      return res
+        .status(200)
+        .json({ message: "Le personnage a bien été ajouté à vos favoris" });
+    } else {
+      return res.status(401).json({ message: "Accès refusé" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// Ajouter un comic en favoris
+router.post("/user/favoris/comic", async (req, res) => {
+  try {
+    const receivedToken = req.body.token;
+    const receivedId = req.body.id;
+
+    const userFound = await User.findOne({ token: receivedToken });
+
+    if (!userFound) {
+      return res.status(400).json({
+        message: "Vous n'êtes pas connecté",
+      });
+    }
+
+    if (userFound) {
+      const response = await axios.get(
+        `https://lereacteur-marvel-api.herokuapp.com/comic/${receivedId}?apiKey=${process.env.API_KEY}`
+      );
+
+      userFound.favoris.comic.push(response.data);
+      userFound.save();
+
+      return res
+        .status(200)
+        .json({ message: "Le personnage a bien été ajouté à vos favoris" });
+    } else {
+      return res.status(401).json({ message: "Accès refusé" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// Consulter les favoris
+
+router.get("/user/favoris", async (req, res) => {
+  try {
+    // console.log("req.headers.authorization -->", req.headers.authorization);
+
+    const receivedTokenBearer = req.headers.authorization;
+    const receivedToken = receivedTokenBearer.replace("Bearer ", "");
+
+    // console.log("receivedToken -->", receivedToken);
+
+    const response = await User.findOne({ token: receivedToken });
+
+    // console.log("userFound -->", userFound);
+
+    // console.log("userFound.favoris -->", userFound.favoris);
+
+    // console.log("response -->", response);
+    // console.log("favoris -->", favoris);
+
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;
