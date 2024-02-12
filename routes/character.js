@@ -9,6 +9,7 @@ router.use(express.json());
 
 router.get("/character", async (req, res) => {
   try {
+    console.log(req.query);
     let query = `apiKey=${process.env.API_KEY}`;
     if (req.query.name) {
       query = query + `&name=${req.query.name}`;
@@ -20,9 +21,6 @@ router.get("/character", async (req, res) => {
     let response = await axios.get(
       `https://lereacteur-marvel-api.herokuapp.com/characters?${query}`
     );
-
-    // console.log("response -->", response);
-    // console.log("response.data -->", response.data);
 
     return res.status(200).json(response.data);
   } catch (error) {
