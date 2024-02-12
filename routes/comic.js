@@ -1,6 +1,7 @@
 require("dotenv").config();
 const { default: axios } = require("axios");
 const express = require("express");
+const { findById, findOne } = require("../models/User");
 const router = express.Router();
 
 router.use(express.json());
@@ -48,7 +49,6 @@ router.get("/comic/:comicId", async (req, res) => {
     let response = await axios.get(
       `https://lereacteur-marvel-api.herokuapp.com/comic/${req.params.comicId}?apiKey=${process.env.API_KEY}`
     );
-    console.log(response.data);
 
     return res.status(200).json(response.data);
   } catch (error) {
